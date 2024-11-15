@@ -1,6 +1,7 @@
 import 'package:bd_erp/components/auth_check.dart';
 import 'package:bd_erp/features/authentication/bloc/auth_bloc.dart';
 import 'package:bd_erp/features/authentication/pages/login_page.dart';
+import 'package:bd_erp/features/home/bloc/home_bloc.dart';
 import 'package:bd_erp/locator.dart';
 import 'package:bd_erp/static/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => AuthBloc(),
+        ),
+        BlocProvider(
+          create: (context) => HomeBloc(),
         ),
       ],
       child:const MaterialApp(
