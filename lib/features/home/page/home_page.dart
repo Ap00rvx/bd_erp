@@ -1,6 +1,11 @@
 import 'dart:convert';
 
 import 'package:bd_erp/components/detail_box.dart';
+import 'package:bd_erp/features/home/widgets/attendance_graph.dart';
+import 'package:bd_erp/features/home/widgets/pdp_attendance_widget.dart';
+import 'package:bd_erp/features/home/widgets/subject_attendance.dart';
+import 'package:bd_erp/models/attendance_model.dart';
+import 'package:bd_erp/models/pdp_attendance_model.dart';
 import 'package:bd_erp/models/std_atd_details.dart';
 import 'package:gap/gap.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -84,8 +89,17 @@ class _HomePageState extends State<HomePage>
   Widget _buildHome(BuildContext context, dynamic data) {
     final userData = locator.get<AuthRepository>().user!;
     final attd = StdSubAtdDetails.fromJson(data['stdSubAtdDetails']);
+    final attendeData = (data["attendanceData"] as List)
+        .map((e) => Attendance.fromJson(e))
+        .toList();
+    final extraData = (data["extraLectures"] as List)
+        .map((e) => Attendance.fromJson(e))
+        .toList();
+    final pdp = pdpAttendanceFromJson(locator.get<HomeRepository>().pdpData!);
+    // print(pdp);
+
     return Scaffold(
-      backgroundColor: AppThemes.white,
+      backgroundColor: AppThemes.darkerGrey,
       body: RefreshIndicator(
         onRefresh: () async {
           context.read<HomeBloc>().add(FetchHome());
@@ -96,6 +110,9 @@ class _HomePageState extends State<HomePage>
             SliverList(
               delegate: SliverChildListDelegate([
                 AttendanceWidget(data: attd),
+                PdpAttendanceWidget(subject: pdp),
+                AttendanceGraph(data: attendeData + extraData),
+                SubjectAttendanceWidget(subjects: attd.subjects),
               ]),
             ),
           ],
@@ -109,7 +126,7 @@ class _HomePageState extends State<HomePage>
       elevation: 3,
       expandedHeight: 180.0,
       pinned: true,
-      backgroundColor: AppThemes.white,
+      backgroundColor: AppThemes.darkerGrey,
       flexibleSpace: FlexibleSpaceBar(
         expandedTitleScale: 1.5,
         titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
@@ -125,21 +142,21 @@ class _HomePageState extends State<HomePage>
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
                 Text(
                   "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Colors.black45,
+                    color: Colors.white24,
                   ),
                 ),
               ],
             ),
             const Icon(
               Icons.notifications,
-              color: Colors.black,
+              color: Colors.white24,
               size: 28,
             ),
           ],

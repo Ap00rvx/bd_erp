@@ -1,17 +1,16 @@
 import 'package:bd_erp/static/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class AnimatedDonutChart extends StatefulWidget {
+class ProgressChart extends StatefulWidget {
   final double percentage;
 
-  const AnimatedDonutChart({Key? key, required this.percentage})
-      : super(key: key);
+  const ProgressChart({Key? key, required this.percentage}) : super(key: key);
 
   @override
-  _AnimatedDonutChartState createState() => _AnimatedDonutChartState();
+  _ProgressChartState createState() => _ProgressChartState();
 }
 
-class _AnimatedDonutChartState extends State<AnimatedDonutChart>
+class _ProgressChartState extends State<ProgressChart>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -39,18 +38,19 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
 
   @override
   Widget build(BuildContext context) {
-    String p = widget.percentage.toStringAsFixed(2);
-
+     String p= widget.percentage.toStringAsFixed(2);
+   
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
+
         return CustomPaint(
-          size: Size(200, 200),
+          size: Size(100, 100),
           child: Center(
               child: Text(
-            p + "%",
+           p + "%",
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 10,
               color: Colors.white,
             ),
           )), // Size of the donut
@@ -68,6 +68,7 @@ class DonutPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+   
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
@@ -75,7 +76,7 @@ class DonutPainter extends CustomPainter {
     final backgroundPaint = Paint()
       ..color = AppThemes.backgroundLightGrey
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 20;
+      ..strokeWidth = 10;
 
     // Foreground circle (filled part)
     final foregroundPaint = Paint()
@@ -84,17 +85,18 @@ class DonutPainter extends CustomPainter {
             ? [
                 AppThemes.highlightYellow,
                 AppThemes.highlightYellow,
-                Colors.red,
-                // Colors.red,
+                Colors.red, Colors.red,
+                // Colors.red,]
               ]
             : [
                 AppThemes.highlightYellow,
                 AppThemes.highlightYellow,
-                Colors.green
+                Colors.green,
+                Colors.green,
               ],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 20
+      ..strokeWidth = 8
       ..strokeCap = StrokeCap.round;
 
     // Draw the unfilled circle
