@@ -4,6 +4,7 @@ import 'package:bd_erp/models/std_atd_details.dart';
 import 'package:bd_erp/static/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:page_transition/page_transition.dart';
 
 class SubjectAttendanceWidget extends StatelessWidget {
   const SubjectAttendanceWidget({Key? key, required this.subjects})
@@ -32,14 +33,14 @@ class SubjectAttendanceWidget extends StatelessWidget {
           shrinkWrap: true,
           itemCount: subjects.length,
           itemBuilder: (context, index) {
-            return InkWell(
+            return GestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => ViewSubjectAttendancePage(
-                                subject: subjects[index],
-                              )));
+                      PageTransition(
+                          child: ViewSubjectAttendancePage(
+                              subject: subjects[index]),
+                          type: PageTransitionType.fade));
                 },
                 child: _buildSubjectCard(subjects[index]));
           },

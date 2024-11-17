@@ -7,6 +7,9 @@ import 'package:bd_erp/features/home/widgets/subject_attendance.dart';
 import 'package:bd_erp/models/attendance_model.dart';
 import 'package:bd_erp/models/pdp_attendance_model.dart';
 import 'package:bd_erp/models/std_atd_details.dart';
+import 'package:bd_erp/models/user_model.dart';
+import 'package:bd_erp/static/network/urls.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gap/gap.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:bd_erp/features/authentication/repository/auth_rpository.dart';
@@ -121,20 +124,21 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildAppBar(userData) {
+  Widget _buildAppBar(UserModel userData) {
     return SliverAppBar(
       elevation: 3,
-      expandedHeight: 180.0,
+      expandedHeight: 190.0,
       pinned: true,
       backgroundColor: AppThemes.darkerGrey,
       flexibleSpace: FlexibleSpaceBar(
-        expandedTitleScale: 1.5,
-        titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
+        expandedTitleScale: 1.8,
+        titlePadding: const EdgeInsets.only(left: 10, bottom: 2, right: 10),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
@@ -146,19 +150,36 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 Text(
-                  "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
+                  userData.email,
                   style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white24,
+                    fontSize: 12,
+                    color: Colors.white54,
+                  ),
+                ),
+                Text(
+                  userData.admissionNumber.toString(),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.white54,
                   ),
                 ),
               ],
             ),
-            const Icon(
-              Icons.notifications,
-              color: Colors.white24,
-              size: 28,
-            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 4),
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: AppThemes.white,
+                image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                        Urls.imageApi + userData.profilePictureId.toString() ??
+                            ""),
+                    fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: AppThemes.highlightYellow, width: 2),
+              ),
+            )
           ],
         ),
       ),
@@ -174,7 +195,8 @@ class AttendanceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 170,
+      // constraints: BoxConstraints(minHeight: 150),
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(

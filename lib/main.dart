@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setUp();
-
   runApp(const MyApp());
 }
 
@@ -28,7 +27,14 @@ class MyApp extends StatelessWidget {
           create: (context) => HomeBloc(),
         ),
       ],
-      child:const MaterialApp(
+      child: MaterialApp(
+        
+        theme: ThemeData(
+          fontFamily: "nun",
+          textTheme: TextTheme(
+            
+          )
+        ),
         home: AuthCheck(),
       ),
     );
