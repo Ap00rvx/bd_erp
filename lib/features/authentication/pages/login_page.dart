@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             Navigator.pop(context);
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => HomePage()),
+              MaterialPageRoute(builder: (context) => const HomePage()),
               (Route<dynamic> route) => false,
             );
           }
@@ -83,14 +83,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Gap(50),
+                    const Gap(50),
                     Image.asset(
                       "assets/image/login.png",
                       height: 300,
                       fit: BoxFit.cover,
                     ),
                     Container(
-                      constraints: BoxConstraints(minHeight: 350),
+                      constraints: const BoxConstraints(minHeight: 350),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
                         color: AppThemes.backgroundLightGrey.withOpacity(0.5),
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     fontSize: 30,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white)),
-                            Gap(10),
+                            const Gap(10),
                             TextField(
                               cursorColor: Colors.white,
                               style: const TextStyle(color: Colors.white),
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                            Gap(20),
+                            const Gap(20),
                             TextField(
                               onChanged: (s) {
                                 setState(() {});
@@ -158,7 +158,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   color: Colors.white,
                                 ),
                                 suffixIcon: AnimatedOpacity(
-                                  duration: Duration(milliseconds: 500),
+                                  duration: const Duration(milliseconds: 500),
+                                  opacity:
+                                      _password.text.isNotEmpty == true ? 1 : 0,
                                   child: IconButton(
                                     onPressed: () {
                                       setState(() {
@@ -166,11 +168,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       });
                                     },
                                     icon: obsure == false
-                                        ? Icon(Icons.visibility)
-                                        : Icon(Icons.visibility_off),
+                                        ? const Icon(Icons.visibility)
+                                        : const Icon(Icons.visibility_off),
                                   ),
-                                  opacity:
-                                      _password.text.isNotEmpty == true ? 1 : 0,
                                 ),
                                 suffixIconColor: AppThemes.white,
                                 hintStyle: const TextStyle(color: Colors.white),
@@ -191,7 +191,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                            Gap(20),
+                            const Gap(20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -205,14 +205,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   checkColor: AppThemes.black,
                                   activeColor: AppThemes.highlightYellow,
                                 ),
-                                Text(
+                                const Text(
                                   'Remember me',
                                   style: TextStyle(
                                       color: AppThemes.highlightYellow),
                                 )
                               ],
                             ),
-                            Gap(20),
+                            const Gap(20),
                             ElevatedButton(
                               onPressed: () async {
                                 if (_username.text.isEmpty ||
@@ -233,7 +233,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppThemes.highlightYellow,
-                                fixedSize: Size(400, 55),
+                                fixedSize: const Size(400, 55),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40),
                                 ),

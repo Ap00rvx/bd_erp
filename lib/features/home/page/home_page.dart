@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bd_erp/components/detail_box.dart';
+import 'package:bd_erp/components/errror_page.dart';
 import 'package:bd_erp/features/home/widgets/attendance_graph.dart';
 import 'package:bd_erp/features/home/widgets/pdp_attendance_widget.dart';
 import 'package:bd_erp/features/home/widgets/subject_attendance.dart';
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage>
         } else if (state is HomeSuccess) {
           return _buildHome(context, state.data);
         } else if (state is HomeError) {
-          return _buildError(state.message);
+          return ErrrorPage(error: state.message); 
         } else {
           return _buildLoading();
         }
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildLoading() {
     return Scaffold(
-      backgroundColor: AppThemes.white,
+      backgroundColor: AppThemes.darkerGrey,
       body: Center(
         child: SpinKitWaveSpinner(
           color: Colors.white,

@@ -80,16 +80,20 @@ class DonutPainter extends CustomPainter {
     // Foreground circle (filled part)
     final foregroundPaint = Paint()
       ..shader = LinearGradient(
-        colors: percentage < 75
+        colors: percentage < 40
             ? [
-                AppThemes.highlightYellow,
-                AppThemes.highlightYellow,
+                
                 Colors.red,
+                Colors.red,
+                AppThemes.highlightYellow,
                 // Colors.red,
-              ]
+              ]: percentage < 75 ?[
+                AppThemes.highlightYellow,
+                AppThemes.highlightYellow,
+                Colors.orange,
+                ]
             : [
-                AppThemes.highlightYellow,
-                AppThemes.highlightYellow,
+                Colors.green,
                 Colors.green
               ],
       ).createShader(Rect.fromCircle(center: center, radius: radius))

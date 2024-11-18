@@ -1,6 +1,6 @@
 import 'package:bd_erp/components/home.dart';
 import 'package:bd_erp/features/authentication/pages/login_page.dart';
-import 'package:bd_erp/features/home/page/home_page.dart';
+
 import 'package:bd_erp/static/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -28,7 +28,7 @@ class _AuthCheckState extends State<AuthCheck> with TickerProviderStateMixin {
         builder: (context, snapshot) {
            if(snapshot.connectionState == ConnectionState.waiting){
             return Scaffold(
-             backgroundColor: AppThemes.white,
+             backgroundColor: AppThemes.darkerGrey,
             body: Center(
               child: SpinKitWaveSpinner(
                 color: Colors.white,
@@ -45,7 +45,7 @@ class _AuthCheckState extends State<AuthCheck> with TickerProviderStateMixin {
             if (data[0] != "" && data[1] != "") 
                 return FetchHome(name: data[0],pass: data[1],);
             else 
-            return LoginPage();
+            return const LoginPage();
           } else {
             return const LoginPage();
           }

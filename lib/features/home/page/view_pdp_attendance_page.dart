@@ -1,30 +1,38 @@
 import 'dart:math';
 
 import 'package:bd_erp/components/progres_indicator.dart';
-import 'package:bd_erp/features/home/repository/home_repository.dart';
-import 'package:bd_erp/locator.dart';
-import 'package:bd_erp/models/attendance_model.dart';
-import 'package:bd_erp/models/std_atd_details.dart';
+import 'package:bd_erp/models/pdp_attendance_model.dart';
 import 'package:bd_erp/static/theme/app_theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class ViewSubjectAttendancePage extends StatelessWidget {
-  const ViewSubjectAttendancePage({super.key, required this.subject});
-  final Subject subject;
+class ViewPdpAttendancePage extends StatelessWidget {
+  const ViewPdpAttendancePage({super.key, required this.subject});
+  final List<PdpAttendance> subject;
+  int getPresent() {
+    return subject.where((e) => !e.isInAbsent).length;
+  }
 
+  int getAbsent() {
+    return subject.where((e) => e.isInAbsent).length;
+  }
+
+  List<PdpAttendance> get presents =>
+      subject.where((e) => !e.isInAbsent).toList();
+  List<PdpAttendance> get absents =>
+      subject.where((e) => e.isInAbsent).toList();
   List<Map<DateTime, Map<String, dynamic>>> getAttendanceDetails(
-      List<Attendance> data) {
+      List<PdpAttendance> data) {
     Map<DateTime, Map<String, dynamic>> consolidatedAttendance = {};
 
     for (var i = 0; i < data.length; i++) {
       final dataOfDay = data[i];
-      final date = DateTime.parse(dataOfDay.absentDate);
+      final date = (dataOfDay.attendanceDate);
 
       if (consolidatedAttendance.containsKey(date)) {
         // Update existing entry if necessary
-        if (dataOfDay.isAbsent) {
+        if (dataOfDay.isInAbsent) {
           consolidatedAttendance[date]!["isAbsent"]++;
         } else {
           consolidatedAttendance[date]!["isPresent"]++;
@@ -32,7 +40,7 @@ class ViewSubjectAttendancePage extends StatelessWidget {
       } else {
         // Add new entry if it doesn't already exist
         consolidatedAttendance[date] = {"isAbsent": 0, "isPresent": 0};
-        if (dataOfDay.isAbsent) {
+        if (dataOfDay.isInAbsent) {
           consolidatedAttendance[date]!["isAbsent"]++;
         } else {
           consolidatedAttendance[date]!["isPresent"]++;
@@ -48,26 +56,12 @@ class ViewSubjectAttendancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final attdanceDatajson = locator
-        .get<HomeRepository>()
-        .responseData!["attendanceData"] as List<dynamic>;
-    final extraLectures =
-        locator.get<HomeRepository>().responseData!["extraLectures"] as List;
-    final subjectName = subject.id;
-    final attdanceData = (attdanceDatajson + extraLectures)
-        .where((element) => element["subjectId"] == subjectName)
-        .toList();
-    print(attdanceData);
-    final attData = attdanceData.map((e) {
-      return Attendance.fromJson(e);
-    }).toList();
-    print(attData.length);
     return Scaffold(
       backgroundColor: AppThemes.darkerGrey,
       appBar: AppBar(
         foregroundColor: AppThemes.white,
-        title: Text(
-          subject.name,
+        title: const Text(
+          "PDP Attendance",
           style: const TextStyle(
               color: AppThemes.white,
               fontWeight: FontWeight.bold,
@@ -80,62 +74,33 @@ class ViewSubjectAttendancePage extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Column(
             children: [
-              _buildSubjectCard(subject),
+              _buildAttendanceCard(presents, absents),
               const Text("Attendance Statistics",
                   style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: AppThemes.white)),
-              _buildAttendanceGraph(getAttendanceDetails(attData)),
+              _buildAttendanceGraph(getAttendanceDetails(subject)),
               const Text("Datewise Attendance",
                   style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: AppThemes.white)),
-              _buildAttendanceList(getAttendanceDetails(attData))
+              ListView.builder(
+                  reverse: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return _attendanceCard(
+                        getAttendanceDetails(subject)[index]);
+                  },
+                  itemCount: getAttendanceDetails(subject).length),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-List<FlSpot> getPresent(List<Map<DateTime, Map<String, dynamic>>> data) {
-  int first = 1;
-  return data.map((entry) {
-    // Use the day of the month as the x-axis value
-    int x = first;
-    first++;
-    final y = entry.values.first["isPresent"].toDouble();
-    // print(x.toString() + " " + y.toString());
-    return FlSpot(x.toDouble(), y);
-  }).toList();
-}
-
-List<FlSpot> getaAbssent(List<Map<DateTime, Map<String, dynamic>>> data) {
-  int first = 1;
-  return data.map((entry) {
-    // Use the day of the month as the x-axis value
-    int x = first;
-    first++;
-    final y = entry.values.first["isAbsent"].toDouble();
-    // print(x.toString() + " " + y.toString());
-    return FlSpot(x.toDouble(), y);
-  }).toList();
-}
-
-Widget _buildAttendanceList(List<Map<DateTime, Map<String, dynamic>>> data) {
-  return ListView.builder(
-    physics: NeverScrollableScrollPhysics(),
-    shrinkWrap: true,
-    reverse: true,
-    itemCount: data.length,
-    itemBuilder: (context, index) {
-      print(data[index]);
-      return _attendanceCard(data[index]);
-    },
-  );
 }
 
 Widget _attendanceCard(Map<DateTime, Map<String, dynamic>> data) {
@@ -208,8 +173,106 @@ Widget _attendanceCard(Map<DateTime, Map<String, dynamic>> data) {
   );
 }
 
+Widget _buildAttendanceCard(
+    List<PdpAttendance> getPresent, List<PdpAttendance> getAbsent) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 11.0),
+    child: Container(
+      constraints: const BoxConstraints(minHeight: 100),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      margin: const EdgeInsets.symmetric(vertical: 9), // Reduced margin
+      decoration: BoxDecoration(
+        color: AppThemes.backgroundLightGrey,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            spreadRadius: 5,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(children: [
+        const Gap(10),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ignore: prefer_const_constructors
+              Text(
+                "PDP Attendance",
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: AppThemes.white,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Total Presents: ${getPresent.length}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppThemes.white,
+                      ),
+                    ),
+                    Text(
+                      "Total Lectures: ${getAbsent.length}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppThemes.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: 70,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: ProgressChart(
+              percentage:
+                  (getPresent.length / (getPresent.length + getAbsent.length)) *
+                      100,
+              gradient:
+                  (getPresent.length / (getPresent.length + getAbsent.length)) *
+                              100 <
+                          40
+                      ? [
+                          Colors.red,
+                          Colors.red,
+                          AppThemes.highlightYellow,
+                        ]
+                      : (getPresent.length /
+                                      (getPresent.length + getAbsent.length)) *
+                                  100 <
+                              75
+                          ? [
+                              AppThemes.highlightYellow,
+                              AppThemes.highlightYellow,
+                              Colors.orange,
+                            ]
+                          : [Colors.green, Colors.green],
+            ),
+          ),
+        ),
+        const Gap(10),
+      ]),
+    ),
+  );
+}
+
 Widget _buildAttendanceGraph(List<Map<DateTime, Map<String, dynamic>>> data) {
   data = data.reversed.toList();
+  print(data);
   return SizedBox(
     height: 300,
     child: Padding(
@@ -286,97 +349,5 @@ Widget _buildAttendanceGraph(List<Map<DateTime, Map<String, dynamic>>> data) {
         ),
       ),
     ),
-  );
-}
-
-Widget _buildSubjectCard(Subject subject) {
-  return Container(
-    // height: 150,
-    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-    margin: const EdgeInsets.symmetric(vertical: 9), // Reduced margin
-    decoration: BoxDecoration(
-      color: AppThemes.backgroundLightGrey,
-      borderRadius: BorderRadius.circular(30),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          blurRadius: 10,
-          spreadRadius: 5,
-          offset: const Offset(0, 5),
-        ),
-      ],
-    ),
-    child: Row(children: [
-      const Gap(10),
-      Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              subject.name,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: AppThemes.white,
-              ),
-            ),
-            Text(
-              subject.code,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppThemes.highlightYellow,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Total Presents: " + subject.presentLeactures.toString(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppThemes.white,
-                    ),
-                  ),
-                  Text(
-                    "Total Lectures: " + subject.totalLeactures.toString(),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppThemes.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: 70,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: ProgressChart(
-            percentage: subject.percentageAttendance,
-            gradient: subject.percentageAttendance < 40
-                ? [
-                    Colors.red,
-                    Colors.red,
-                    AppThemes.highlightYellow,
-                  ]
-                : subject.percentageAttendance < 75
-                    ? [
-                        AppThemes.highlightYellow,
-                        AppThemes.highlightYellow,
-                        Colors.orange,
-                      ]
-                    : [Colors.green, Colors.green],
-          ),
-        ),
-      ),
-      const Gap(10),
-    ]),
   );
 }

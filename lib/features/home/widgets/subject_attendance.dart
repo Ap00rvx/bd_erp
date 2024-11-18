@@ -119,7 +119,20 @@ Widget _buildSubjectCard(Subject subject) {
         width: 70,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: ProgressChart(percentage: subject.percentageAttendance),
+          child: ProgressChart(percentage: subject.percentageAttendance,gradient:  subject.percentageAttendance < 40
+            ? [
+                Colors.red,
+                Colors.red,
+                AppThemes.highlightYellow,
+    
+              ]
+            : subject.percentageAttendance  < 75
+                ? [
+                    AppThemes.highlightYellow,
+                    AppThemes.highlightYellow,
+                    Colors.orange,
+                  ]
+                : [Colors.green, Colors.green],),
         ),
       ),
       const Gap(10),

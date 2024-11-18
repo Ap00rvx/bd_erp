@@ -135,19 +135,15 @@ class _AttendanceGraphState extends State<AttendanceGraph> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: LineChart(
-                curve: Curves.easeIn,
-                LineChartData(
-                  minX: 1,
-                  maxX: 10,
-                  minY: 0,
+              child: BarChart(
+                BarChartData(
                   maxY: 8,
                   backgroundColor: Colors.transparent,
                   gridData: const FlGridData(
-                      show: true,
-                      drawVerticalLine: false,
-                      horizontalInterval: 1,
-                      verticalInterval: 1),
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 1,
+                  ),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -170,11 +166,10 @@ class _AttendanceGraphState extends State<AttendanceGraph> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, _) {
-                          // print(value);
                           return Text(
                             dates[value.toInt() - 1],
-                            style:
-                                TextStyle(color: AppThemes.white, fontSize: 10),
+                            style: const TextStyle(
+                                color: AppThemes.white, fontSize: 10),
                           );
                         },
                       ),
@@ -184,41 +179,37 @@ class _AttendanceGraphState extends State<AttendanceGraph> {
                     show: true,
                     border: Border.all(color: Colors.white.withOpacity(0.2)),
                   ),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: getPresentData(data),
-                      isCurved: false,
-                      color: Colors.green,
-                      barWidth: 4,
-                      isStrokeCapRound: true,
-                      belowBarData: BarAreaData(
-                          show: true,
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.green,
-                                Colors.green.withOpacity(0.5),
-                              ])),
-                    ),
-                    LineChartBarData(
-                      spots: getAbsentData(data),
-                      isCurved: false,
-                      color: Colors.red,
-                      barWidth: 4,
-                      isStrokeCapRound: true,
-                      belowBarData: BarAreaData(
-                          show: false,
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.red,
-                                Colors.red.withOpacity(0.5),
-                                Colors.transparent
-                              ])),
-                    ),
-                  ],
+                  barGroups: data.entries.map((entry) {
+                    int index =
+                        dates.indexOf("${entry.key.day}-${entry.key.month}");
+                    final presentCount =
+                        entry.value['present']?.toDouble() ?? 0;
+                    final absentCount = entry.value['absent']?.toDouble() ?? 0;
+                    return BarChartGroupData(
+                      x: index + 1,
+                      barRods: [
+                        BarChartRodData(
+                          toY: presentCount,
+                          color: Colors.green,
+                          width: 8,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(1),
+                            topRight: Radius.circular(1),
+                          ),
+                        ),
+                        BarChartRodData(
+                          toY: absentCount,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(1),
+                            topRight: Radius.circular(1),
+                          ),
+                          color: Colors.red,
+                          width: 8,
+                        ),
+                      ],
+                      barsSpace: 4,
+                    );
+                  }).toList(),
                 ),
               ),
             ),

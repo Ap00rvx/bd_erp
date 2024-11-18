@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class ProgressChart extends StatefulWidget {
   final double percentage;
+  final List<Color> gradient;
 
-  const ProgressChart({Key? key, required this.percentage}) : super(key: key);
+  const ProgressChart({Key? key, required this.percentage,required this.gradient}) : super(key: key);
 
   @override
   _ProgressChartState createState() => _ProgressChartState();
@@ -38,23 +39,22 @@ class _ProgressChartState extends State<ProgressChart>
 
   @override
   Widget build(BuildContext context) {
-     String p= widget.percentage.toStringAsFixed(2);
-   
+    String p = widget.percentage.toStringAsFixed(2);
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-
         return CustomPaint(
           size: Size(100, 100),
           child: Center(
               child: Text(
-           p + "%",
+            p + "%",
             style: TextStyle(
               fontSize: 10,
               color: Colors.white,
             ),
           )), // Size of the donut
-          painter: DonutPainter(percentage: _animation.value),
+          painter: DonutPainter(percentage: _animation.value,gradient: widget.gradient),
         );
       },
     );
@@ -63,12 +63,11 @@ class _ProgressChartState extends State<ProgressChart>
 
 class DonutPainter extends CustomPainter {
   double percentage;
-
-  DonutPainter({required this.percentage});
+  List<Color> gradient;
+  DonutPainter({required this.percentage, required this.gradient});
 
   @override
   void paint(Canvas canvas, Size size) {
-   
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
@@ -81,19 +80,7 @@ class DonutPainter extends CustomPainter {
     // Foreground circle (filled part)
     final foregroundPaint = Paint()
       ..shader = LinearGradient(
-        colors: percentage < 75
-            ? [
-                AppThemes.highlightYellow,
-                AppThemes.highlightYellow,
-                Colors.red, Colors.red,
-                // Colors.red,]
-              ]
-            : [
-                AppThemes.highlightYellow,
-                AppThemes.highlightYellow,
-                Colors.green,
-                Colors.green,
-              ],
+        colors:gradient
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8

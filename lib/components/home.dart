@@ -1,3 +1,4 @@
+import 'package:bd_erp/components/errror_page.dart';
 import 'package:bd_erp/features/authentication/bloc/auth_bloc.dart';
 import 'package:bd_erp/features/home/page/home_page.dart';
 import 'package:bd_erp/static/theme/app_theme.dart';
@@ -27,7 +28,7 @@ class _FetchHomeState extends State<FetchHome> with TickerProviderStateMixin {
       builder: (context, state) {
         if (state is AuthLoading) {
           return Scaffold(
-             backgroundColor: AppThemes.white,
+            backgroundColor: AppThemes.darkerGrey,
             body: Center(
               child: SpinKitWaveSpinner(
                 color: Colors.white,
@@ -39,15 +40,11 @@ class _FetchHomeState extends State<FetchHome> with TickerProviderStateMixin {
           );
         } else if (state is AuthSuccess) {
           return const HomePage();
-        } else if(state is AuthFailure)
-            return Scaffold(
-            body: Center(
-              child: Text(state.message),
-            ),
-          );
-          else 
-           return Scaffold(
-             backgroundColor: AppThemes.white,
+        } else if (state is AuthFailure)
+          return ErrrorPage(error: "Somthing went wrong");
+        else
+          return Scaffold(
+            backgroundColor: AppThemes.white,
             body: Center(
               child: SpinKitWaveSpinner(
                 color: Colors.white,
@@ -56,7 +53,7 @@ class _FetchHomeState extends State<FetchHome> with TickerProviderStateMixin {
                     vsync: this, duration: const Duration(milliseconds: 1200)),
               ),
             ),
-          ); 
+          );
       },
     );
   }

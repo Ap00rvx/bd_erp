@@ -28,14 +28,10 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        
         theme: ThemeData(
           fontFamily: "nun",
-          textTheme: TextTheme(
-            
-          )
         ),
-        home: AuthCheck(),
+        home: const AuthCheck(),
       ),
     );
   }
