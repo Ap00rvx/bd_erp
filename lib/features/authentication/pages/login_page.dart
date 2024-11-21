@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppThemes.white,
+      backgroundColor: AppThemes.darkerGrey,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {
           if (state is AuthSuccess) {
@@ -93,12 +93,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       constraints: const BoxConstraints(minHeight: 350),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        color: AppThemes.backgroundLightGrey.withOpacity(0.5),
+                        color: AppThemes.backgroundLightGrey.withOpacity(1),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 2,
+                            blurRadius: 2,
                             offset: const Offset(0, 3),
                           ),
                         ],

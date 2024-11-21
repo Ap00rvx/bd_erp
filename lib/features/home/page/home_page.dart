@@ -5,6 +5,7 @@ import 'package:bd_erp/components/errror_page.dart';
 import 'package:bd_erp/features/home/widgets/attendance_graph.dart';
 import 'package:bd_erp/features/home/widgets/pdp_attendance_widget.dart';
 import 'package:bd_erp/features/home/widgets/subject_attendance.dart';
+import 'package:bd_erp/features/profile/pages/profile_page.dart';
 import 'package:bd_erp/models/attendance_model.dart';
 import 'package:bd_erp/models/pdp_attendance_model.dart';
 import 'package:bd_erp/models/std_atd_details.dart';
@@ -12,6 +13,7 @@ import 'package:bd_erp/models/user_model.dart';
 import 'package:bd_erp/static/network/urls.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gap/gap.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:bd_erp/features/authentication/repository/auth_rpository.dart';
 import 'package:bd_erp/features/home/bloc/home_bloc.dart';
@@ -60,7 +62,7 @@ class _HomePageState extends State<HomePage>
         } else if (state is HomeSuccess) {
           return _buildHome(context, state.data);
         } else if (state is HomeError) {
-          return ErrrorPage(error: state.message); 
+          return ErrrorPage(error: state.message);
         } else {
           return _buildLoading();
         }
@@ -166,19 +168,33 @@ class _HomePageState extends State<HomePage>
                 ),
               ],
             ),
-            Container(
-              margin: EdgeInsets.only(bottom: 4),
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: AppThemes.white,
-                image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                        Urls.imageApi + userData.profilePictureId.toString() ??
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    PageTransition(
+                        child: ProfilePage(userModel: userData),
+                        type: PageTransitionType.fade));
+              },
+              child: Hero(
+                
+                tag: "profile",
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 4),
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: AppThemes.white,
+                    image: DecorationImage(
+                        image: CachedNetworkImageProvider(Urls.imageApi +
+                                userData.profilePictureId.toString() ??
                             ""),
-                    fit: BoxFit.cover),
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: AppThemes.highlightYellow, width: 2),
+                        fit: BoxFit.cover),
+                    borderRadius: BorderRadius.circular(100),
+                    border:
+                        Border.all(color: AppThemes.highlightYellow, width: 2),
+                  ),
+                ),
               ),
             )
           ],
